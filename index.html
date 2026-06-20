@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>To Do List App</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container mt-5">
+        <h1 class="mb-4">ToDo App</h1>
+        
+        <div class="mb-5">
+            <div class="form-group">
+                <label for="taskInput">Add Main Task:</label>
+                <input type="text" class="form-control" id="taskInput" placeholder="What needs to be done?">
+            </div>
+            <button id="addTaskBtn" class="btn btn-primary">Add Task</button>
+        </div>
+        
+        <hr>
+        <h2 class="mb-4">Task List</h2>
+
+        <ul class="list-group" id="taskList"></ul>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
