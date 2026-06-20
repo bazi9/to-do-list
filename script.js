@@ -50,6 +50,18 @@ document.addEventListener('DOMContentLoaded', () => {
             mainActionArea.className = 'd-flex align-items-center';
             mainActionArea.style.gap = '10px';
 
+            // Main Task "Edit" Button (Yellow/Warning)
+            const editMainBtn = document.createElement('button');
+            editMainBtn.className = 'btn btn-warning btn-sm text-dark';
+            editMainBtn.textContent = 'Edit';
+            editMainBtn.onclick = () => {
+                const newTitle = prompt("Edit Main Task:", task.title);
+                if (newTitle !== null && newTitle.trim() !== '') {
+                    tasks[index].title = newTitle.trim();
+                    updateApp();
+                }
+            };
+
             // Main Task "Delete" Button
             const deleteMainBtn = document.createElement('button');
             deleteMainBtn.className = 'btn btn-danger btn-sm';
@@ -85,7 +97,8 @@ document.addEventListener('DOMContentLoaded', () => {
             subtaskForm.appendChild(subInput);
             subtaskForm.appendChild(subBtn);
             mainActionArea.appendChild(subtaskForm);
-            mainActionArea.appendChild(deleteMainBtn); // Add the main delete button to the far right
+            mainActionArea.appendChild(editMainBtn); // Added Edit Main Button
+            mainActionArea.appendChild(deleteMainBtn); 
             
             taskHeader.appendChild(title);
             taskHeader.appendChild(mainActionArea);
@@ -117,6 +130,18 @@ document.addEventListener('DOMContentLoaded', () => {
                         updateApp();
                     };
 
+                    // Subtask "Edit" Button (Yellow/Warning)
+                    const editSubBtn = document.createElement('button');
+                    editSubBtn.className = 'btn btn-warning btn-sm text-dark';
+                    editSubBtn.textContent = 'Edit';
+                    editSubBtn.onclick = () => {
+                        const newTitle = prompt("Edit subcategory:", subtask.title);
+                        if (newTitle !== null && newTitle.trim() !== '') {
+                            tasks[index].subtasks[subIndex].title = newTitle.trim();
+                            updateApp();
+                        }
+                    };
+
                     // Subtask "Delete" Button (Red)
                     const delSubBtn = document.createElement('button');
                     delSubBtn.className = 'btn btn-danger btn-sm';
@@ -127,6 +152,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     };
 
                     subBtnGroup.appendChild(compSubBtn);
+                    subBtnGroup.appendChild(editSubBtn); // Inserted exactly between Completed and Delete
                     subBtnGroup.appendChild(delSubBtn);
 
                     subLi.appendChild(textSpan);
