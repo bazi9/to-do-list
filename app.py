@@ -2,7 +2,7 @@ from flask import Flask, render_template, request, redirect, url_for
 
 app = Flask(__name__)
 
-# In-memory data storage for simplicity
+# Dictionary to hold Main Tasks as keys, and lists of Subcategories as values
 tasks = {}
 
 @app.route('/')
@@ -11,16 +11,23 @@ def index():
 
 @app.route('/add_task', methods=['POST'])
 def add_task():
-    task_name = request.form['task'].strip()
-    # If category is empty, default to 'Uncategorized'
-    category = request.form.get('category', '').strip() or 'Uncategorized'
+    task_name = request.form.get('task', '').strip()
     
-    if task_name:
-        if category not in tasks:
-            tasks[category] = [task_name]
-        else:
-            tasks[category].append(task_name)
+    # Create the main task if it doesn't exist yet
+    if task_name and task_name not in tasks:
+        tasks[task_name] = [] 
     
+    return redirect(url_for('index'))
+
+@app.route('/add_subtask', methods=['POST'])
+def add_subtask():
+    main_task = request.form.get('main_task')
+    subtask_name = request.form.get('subtask', '').strip()
+    
+    # Add the subcategory to the specific main task
+    if main_task in tasks and subtask_name:
+        tasks[main_task].append(subtask_name)
+        
     return redirect(url_for('index'))
 
 if __name__ == '__main__':
