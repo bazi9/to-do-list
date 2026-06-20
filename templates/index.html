@@ -5,39 +5,43 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ToDo App</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
-    <link rel="stylesheet" href="{{ url_for('static', filename='static/css/custom.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/custom.css') }}">
 </head>
 <body>
     <div class="container mt-5">
-        <h1>ToDo App</h1>
-        <form action="/add_task" method="post">
+        <h1 class="mb-4">ToDo App</h1>
+        <form action="/add_task" method="post" class="mb-5">
             <div class="form-group">
                 <label for="task">Task:</label>
-                <input type="text" class="form-control" id="task" name="task" required>
+                <input type="text" class="form-control" id="task" name="task" required placeholder="What needs to be done?">
             </div>
             <div class="form-group">
                 <label for="category">Category (optional):</label>
-                <input type="text" class="form-control" id="category" name="category">
+                <input type="text" class="form-control" id="category" name="category" placeholder="e.g. Work, Home">
             </div>
             <button type="submit" class="btn btn-primary">Add Task</button>
         </form>
         
-        {% for category, tasks in tasks.items() %}
-            <h2>{{ category }}</h2>
-            <ul>
-                {% for task in tasks %}
-                    <li class="task">
-                        {{ task }}
-                    </li>
-                {% endfor %}
-            </ul>
-        {% empty %}
-            <p>No tasks yet.</p>
-        {% endfor %}
+        {% if tasks %}
+            {% for category, sub_tasks in tasks.items() %}
+                <h3 class="mt-4">{{ category }}</h3>
+                <ul class="list-group">
+                    {% for task in sub_tasks %}
+                        <li class="list-group-item task">
+                            {{ task }}
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% endfor %}
+        {% else %}
+            <div class="alert alert-info">No tasks yet. Add one above!</div>
+        {% endif %}
     </div>
 
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+    
+    <script src="{{ url_for('static', filename='js/custom.js') }}"></script>
 </body>
 </html>
