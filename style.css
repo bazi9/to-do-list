@@ -19,3 +19,9 @@ h1, h2 {
     gap: 10px;
     margin: 0;
 }
+
+/* Strikethrough effect for completed tasks */
+.completed-text {
+    text-decoration: line-through;
+    opacity: 0.5;
+}
