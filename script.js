@@ -1,8 +1,16 @@
-// Wait for the entire HTML to load before running logic
 document.addEventListener('DOMContentLoaded', () => {
     
-    // Load tasks from browser memory, or start with an empty list
-    let tasks = JSON.parse(localStorage.getItem('todo_tasks')) || [];
+    // Load tasks from browser memory
+    let rawTasks = JSON.parse(localStorage.getItem('todo_tasks')) || [];
+
+    // Upgrade old saved tasks (which were just text) into objects that can hold a "completed" status
+    let tasks = rawTasks.map(task => {
+        return {
+            title: task.title,
+            completed: task.completed || false,
+            subtasks: task.subtasks.map(st => typeof st === 'string' ? { title: st, completed: false } : st)
+        };
+    });
 
     const taskInput = document.getElementById('taskInput');
     const addTaskBtn = document.getElementById('addTaskBtn');
@@ -31,11 +39,27 @@ document.addEventListener('DOMContentLoaded', () => {
             const taskHeader = document.createElement('div');
             taskHeader.className = 'd-flex justify-content-between align-items-center';
 
+            // Main Task Title
             const title = document.createElement('h4');
             title.className = 'mb-0 text-dark';
             title.textContent = task.title;
+            if (task.completed) title.classList.add('completed-text');
 
-            // 2. Create the Subtask Input and '+' Button
+            // Form area for the Main Task row
+            const mainActionArea = document.createElement('div');
+            mainActionArea.className = 'd-flex align-items-center';
+            mainActionArea.style.gap = '10px';
+
+            // Main Task "Delete" Button
+            const deleteMainBtn = document.createElement('button');
+            deleteMainBtn.className = 'btn btn-danger btn-sm';
+            deleteMainBtn.textContent = 'Delete Task';
+            deleteMainBtn.onclick = () => {
+                tasks.splice(index, 1); // Remove the whole task
+                updateApp();
+            };
+
+            // Subtask Input and '+' Button
             const subtaskForm = document.createElement('div');
             subtaskForm.className = 'subtask-form';
 
@@ -48,28 +72,65 @@ document.addEventListener('DOMContentLoaded', () => {
             subBtn.className = 'btn btn-success btn-sm font-weight-bold';
             subBtn.textContent = '+';
             
-            // Add subtask logic
             subBtn.onclick = () => {
                 const subText = subInput.value.trim();
                 if (subText) {
-                    tasks[index].subtasks.push(subText);
+                    // Push a new subtask object
+                    tasks[index].subtasks.push({ title: subText, completed: false });
                     updateApp();
                 }
             };
 
+            // Assemble the Main Task Header
             subtaskForm.appendChild(subInput);
             subtaskForm.appendChild(subBtn);
+            mainActionArea.appendChild(subtaskForm);
+            mainActionArea.appendChild(deleteMainBtn); // Add the main delete button to the far right
+            
             taskHeader.appendChild(title);
-            taskHeader.appendChild(subtaskForm);
+            taskHeader.appendChild(mainActionArea);
             li.appendChild(taskHeader);
             taskList.appendChild(li);
 
-            // 3. Draw the Subcategories below the Main Task
+            // 2. Draw the Subcategories below the Main Task
             if (task.subtasks.length > 0) {
-                task.subtasks.forEach(subtask => {
+                task.subtasks.forEach((subtask, subIndex) => {
                     const subLi = document.createElement('li');
-                    subLi.className = 'list-group-item sub-task d-flex align-items-center';
-                    subLi.innerHTML = `<span class="mr-2 text-muted">&#x21B3;</span> ${subtask}`;
+                    subLi.className = 'list-group-item sub-task d-flex justify-content-between align-items-center';
+                    
+                    // Subtask Text
+                    const textSpan = document.createElement('span');
+                    textSpan.innerHTML = `<span class="mr-2 text-muted">&#x21B3;</span> ${subtask.title}`;
+                    if (subtask.completed) textSpan.classList.add('completed-text');
+
+                    // Subtask Buttons Area
+                    const subBtnGroup = document.createElement('div');
+                    subBtnGroup.style.display = 'flex';
+                    subBtnGroup.style.gap = '5px';
+
+                    // Subtask "Completed" Button (Green)
+                    const compSubBtn = document.createElement('button');
+                    compSubBtn.className = 'btn btn-success btn-sm';
+                    compSubBtn.textContent = subtask.completed ? 'Undo' : 'Completed';
+                    compSubBtn.onclick = () => {
+                        tasks[index].subtasks[subIndex].completed = !tasks[index].subtasks[subIndex].completed;
+                        updateApp();
+                    };
+
+                    // Subtask "Delete" Button (Red)
+                    const delSubBtn = document.createElement('button');
+                    delSubBtn.className = 'btn btn-danger btn-sm';
+                    delSubBtn.textContent = 'Delete';
+                    delSubBtn.onclick = () => {
+                        tasks[index].subtasks.splice(subIndex, 1);
+                        updateApp();
+                    };
+
+                    subBtnGroup.appendChild(compSubBtn);
+                    subBtnGroup.appendChild(delSubBtn);
+
+                    subLi.appendChild(textSpan);
+                    subLi.appendChild(subBtnGroup);
                     taskList.appendChild(subLi);
                 });
             } else {
@@ -85,13 +146,13 @@ document.addEventListener('DOMContentLoaded', () => {
     addTaskBtn.addEventListener('click', () => {
         const title = taskInput.value.trim();
         if (title) {
-            tasks.push({ title: title, subtasks: [] });
+            tasks.push({ title: title, completed: false, subtasks: [] });
             taskInput.value = '';
             updateApp();
         }
     });
 
-    // Let the user hit "Enter" on their keyboard to add a task
+    // Let the user hit "Enter" on their keyboard to add a main task
     taskInput.addEventListener('keypress', (e) => {
         if (e.key === 'Enter') addTaskBtn.click();
     });
