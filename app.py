@@ -11,13 +11,15 @@ def index():
 
 @app.route('/add_task', methods=['POST'])
 def add_task():
-    task_name = request.form['task']
-    category = request.form.get('category', '')
+    task_name = request.form['task'].strip()
+    # If category is empty, default to 'Uncategorized'
+    category = request.form.get('category', '').strip() or 'Uncategorized'
     
-    if task_name and category not in tasks:
-        tasks[category] = [task_name]
-    elif task_name and category in tasks:
-        tasks[category].append(task_name)
+    if task_name:
+        if category not in tasks:
+            tasks[category] = [task_name]
+        else:
+            tasks[category].append(task_name)
     
     return redirect(url_for('index'))
 
