@@ -5,57 +5,26 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ToDo App</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/custom.css') }}">
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <div class="container mt-5">
         <h1 class="mb-4">ToDo App</h1>
         
-        <form action="/add_task" method="post" class="mb-5">
+        <div class="mb-5">
             <div class="form-group">
-                <label for="task">Add Main Task:</label>
-                <input type="text" class="form-control" id="task" name="task" required placeholder="What needs to be done?">
+                <label for="taskInput">Add Main Task:</label>
+                <input type="text" class="form-control" id="taskInput" placeholder="What needs to be done?">
             </div>
-            <button type="submit" class="btn btn-primary">Add Task</button>
-        </form>
+            <button id="addTaskBtn" class="btn btn-primary">Add Task</button>
+        </div>
         
         <hr>
         <h2 class="mb-4">Task List</h2>
 
-        {% if tasks %}
-            <ul class="list-group">
-            {% for main_task, subtasks in tasks.items() %}
-                
-                <li class="list-group-item list-group-item-secondary d-flex justify-content-between align-items-center mt-3">
-                    <h4 class="mb-0 text-dark">{{ main_task }}</h4>
-                    
-                    <form action="/add_subtask" method="post" class="form-inline m-0">
-                        <input type="hidden" name="main_task" value="{{ main_task }}">
-                        <input type="text" name="subtask" class="form-control form-control-sm mr-2" placeholder="Add subcategory..." required>
-                        <button type="submit" class="btn btn-success btn-sm font-weight-bold">+</button>
-                    </form>
-                </li>
-                
-                {% if subtasks %}
-                    {% for subtask in subtasks %}
-                        <li class="list-group-item sub-task d-flex align-items-center">
-                            <span class="mr-2 text-muted">&#x21B3;</span> {{ subtask }}
-                        </li>
-                    {% endfor %}
-                {% else %}
-                    <li class="list-group-item text-muted sub-task font-italic">No subcategories added yet.</li>
-                {% endif %}
-                
-            {% endfor %}
-            </ul>
-        {% else %}
-            <div class="alert alert-info">No tasks yet. Add one above!</div>
-        {% endif %}
+        <ul class="list-group" id="taskList"></ul>
     </div>
 
-    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
-    <script src="{{ url_for('static', filename='js/custom.js') }}"></script>
+    <script src="script.js"></script>
 </body>
 </html>
