@@ -1,6 +1,18 @@
-.task {
-    margin-bottom: 1rem;
+body {
+    background-color: #f8f9fa;
 }
+
+h1 {
+    color: #343a40;
+    font-weight: bold;
+}
+
+.task {
+    margin-bottom: 0.25rem;
+    background-color: #ffffff;
+    border-radius: 4px;
+}
+
 .sub-task {
     margin-left: 20px;
 }
